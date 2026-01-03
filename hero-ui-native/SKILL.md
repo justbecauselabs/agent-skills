@@ -8,13 +8,35 @@ description: HeroUI Native component system guidance. Use when composing React N
 ## Overview
 Use this skill to choose and configure HeroUI Native components and providers, and to reference component APIs and theming tokens.
 
-## Quick Start
+## Usage
 1. Identify the component or provider you need.
-2. Open `references/hero-ui-native/README.md` for setup and high-level usage.
-3. Open the component doc under `references/hero-ui-native/src/components/` for exact props and examples.
+2. Load only the docs for the specific components you are using.
+3. Use `references/config.md` for provider setup and `references/theming.md` for tokens.
 
-## Reference Map
-- **Provider setup**: `references/hero-ui-native/src/providers/hero-ui-native/provider.md`
-- **Theming tokens**: `references/hero-ui-native/src/styles/theme.md`
-- **Primitives**: `references/hero-ui-native/src/primitives/README.md`
-- **Components**: `references/hero-ui-native/src/components/**`
+## Reference Directory
+All reference files live directly in `references/`:
+- `references/accordion.md`
+- `references/avatar.md`
+- `references/button.md`
+- `references/card.md`
+- `references/checkbox.md`
+- `references/chip.md`
+- `references/config.md`
+- `references/dialog.md`
+- `references/divider.md`
+- `references/error-view.md`
+- `references/form-field.md`
+- `references/popover.md`
+- `references/pressable-feedback.md`
+- `references/radio-group.md`
+- `references/scroll-shadow.md`
+- `references/select.md`
+- `references/skeleton-group.md`
+- `references/skeleton.md`
+- `references/spinner.md`
+- `references/surface.md`
+- `references/switch.md`
+- `references/tabs.md`
+- `references/text-field.md`
+- `references/theming.md`
+- `references/toast.md`
