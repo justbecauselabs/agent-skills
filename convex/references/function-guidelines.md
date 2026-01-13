@@ -100,17 +100,25 @@ Convex Type  | TS/JS type  |  Example Usage         | Validator for argument val
 - You CANNOT register a function through the `api` or `internal` objects.
 - ALWAYS include argument and return validators for all Convex functions. This includes all of `query`, `internalQuery`, `mutation`, `internalMutation`, `action`, and `internalAction`. If a function doesn't return anything, include `returns: v.null()` as its output validator.
 - If the JavaScript implementation of a Convex function doesn't have a return value, it implicitly returns `null`.
+- Public functions must enforce access control (typically using `ctx.auth.getUserIdentity()`). Do not trust spoofable arguments like email or user IDs for authorization.
 
 ## Function calling
 - Use `ctx.runQuery` to call a query from a query, mutation, or action.
 - Use `ctx.runMutation` to call a mutation from a mutation or action.
 - Use `ctx.runAction` to call an action from an action.
 - ONLY call an action from another action if you need to cross runtimes (e.g. from V8 to Node). Otherwise, pull out the shared code into a helper async function and call that directly instead.
+- Use `internal.*` function references for any `ctx.runQuery`, `ctx.runMutation`, `ctx.runAction`, and `ctx.scheduler` calls. Avoid calling `api.*` from inside Convex functions.
 - Try to use as few calls from actions to queries and mutations as possible. Queries and mutations are transactions, so splitting logic up into multiple calls introduces the risk of race conditions.
+- Avoid multiple sequential `ctx.runQuery` / `ctx.runMutation` calls in actions when you can fold them into a single internal function.
+- Use `ctx.runQuery` / `ctx.runMutation` sparingly inside queries and mutations; prefer helper functions when staying in the same runtime.
+- Always `await` async calls (`ctx.db.*`, `ctx.scheduler.*`, `ctx.run*`).
 - All of these calls take in a `FunctionReference`. Do NOT try to pass the callee function directly into one of these calls.
 - When using `ctx.runQuery`, `ctx.runMutation`, or `ctx.runAction` to call a function in the same file, specify a type annotation on the return value to work around TypeScript circularity limitations. For example,
 ```
-export const f = query({
+import { internal } from "./_generated/api";
+import { internalQuery, query } from "./_generated/server";
+
+export const f = internalQuery({
   args: { name: v.string() },
   returns: v.string(),
   handler: async (ctx, args) => {
@@ -122,7 +130,7 @@ export const g = query({
   args: {},
   returns: v.null(),
   handler: async (ctx, args) => {
-    const result: string = await ctx.runQuery(api.example.f, { name: "Bob" });
+    const result: string = await ctx.runQuery(internal.example.f, { name: "Bob" });
     return null;
   },
 });
@@ -130,8 +138,9 @@ export const g = query({
 
 ## Function references
 - Function references are pointers to registered Convex functions.
-- Use the `api` object defined by the framework in `convex/_generated/api.ts` to call public functions registered with `query`, `mutation`, or `action`.
+- Use the `api` object defined by the framework in `convex/_generated/api.ts` to call public functions from client code or outside the Convex functions directory.
 - Use the `internal` object defined by the framework in `convex/_generated/api.ts` to call internal (or private) functions registered with `internalQuery`, `internalMutation`, or `internalAction`.
+- Inside Convex functions, prefer `internal.*` references for `ctx.run*` and scheduling.
 - Convex uses file-based routing, so a public function defined in `convex/example.ts` named `f` has a function reference of `api.example.f`.
 - A private function defined in `convex/example.ts` named `g` has a function reference of `internal.example.g`.
 - Functions can also registered within directories nested within the `convex/` folder. For example, a public function `h` defined in `convex/messages/access.ts` has a function reference of `api.messages.access.h`.
@@ -140,6 +149,7 @@ export const g = query({
 - Convex uses file-based routing, so thoughtfully organize files with public query, mutation, or action functions within the `convex/` directory.
 - Use `query`, `mutation`, and `action` to define public functions.
 - Use `internalQuery`, `internalMutation`, and `internalAction` to define private, internal functions.
+- Keep Convex wrappers thin. Move shared logic into helper functions (e.g., `convex/model/*`) and call them from queries/mutations/actions.
 
 ## Pagination
 - Paginated queries are queries that return a list of results in incremental pages.
@@ -147,17 +157,29 @@ export const g = query({
 
 ```ts
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { query } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
 export const listWithExtraArg = query({
-    args: { paginationOpts: paginationOptsValidator, author: v.string() },
-    handler: async (ctx, args) => {
-        return await ctx.db
-        .query("messages")
-        .filter((q) => q.eq(q.field("author"), args.author))
-        .order("desc")
-        .paginate(args.paginationOpts);
-    },
+  args: { paginationOpts: paginationOptsValidator, author: v.string() },
+  returns: v.object({
+    page: v.array(
+      v.object({
+        _id: v.id("messages"),
+        _creationTime: v.number(),
+        author: v.string(),
+        body: v.string(),
+      }),
+    ),
+    isDone: v.boolean(),
+    continueCursor: v.union(v.string(), v.null()),
+  }),
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("messages")
+      .withIndex("by_author", (q) => q.eq("author", args.author))
+      .order("desc")
+      .paginate(args.paginationOpts);
+  },
 });
 ```
 Note: `paginationOpts` is an object with the following properties:

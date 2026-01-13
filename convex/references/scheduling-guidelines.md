@@ -3,6 +3,7 @@
 ## Cron Guidelines
 - Only use the `crons.interval` or `crons.cron` methods to schedule cron jobs. Do NOT use the `crons.hourly`, `crons.daily`, or `crons.weekly` helpers.
 - Both cron methods take in a FunctionReference. Do NOT try to pass the function directly into one of these methods.
+- Only schedule internal functions (use `internal.*` references). Do not schedule public `api.*` functions.
 - Define crons by declaring the top-level `crons` object, calling some methods on it, and then exporting it as default. For example,
 ```ts
 import { cronJobs } from "convex/server";

@@ -29,6 +29,8 @@ and limit history display to the 10 most recent messages per channel.
 - Enable channel-based conversations
 - Store and retrieve messages with proper ordering
 - Generate AI responses automatically
+- Note: This example omits authentication for brevity. In production, enforce access control with `ctx.auth.getUserIdentity()` and avoid trusting client-provided IDs for authorization.
+- Note: For this repo, keep one exported Convex function per file even if the example shows multiple for compactness.
 
 2. Main Components Needed:
 - Database tables: users, channels, messages
@@ -225,11 +227,11 @@ export const sendMessage = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    const channel = await ctx.db.get(args.channelId);
+    const channel = await ctx.db.get("channels", args.channelId);
     if (!channel) {
       throw new Error("Channel not found");
     }
-    const user = await ctx.db.get(args.authorId);
+    const user = await ctx.db.get("users", args.authorId);
     if (!user) {
       throw new Error("User not found");
     }
@@ -283,7 +285,7 @@ export const loadContext = internalQuery({
     }),
   ),
   handler: async (ctx, args) => {
-    const channel = await ctx.db.get(args.channelId);
+    const channel = await ctx.db.get("channels", args.channelId);
     if (!channel) {
       throw new Error("Channel not found");
     }
@@ -296,7 +298,7 @@ export const loadContext = internalQuery({
     const result = [];
     for (const message of messages) {
       if (message.authorId) {
-        const user = await ctx.db.get(message.authorId);
+        const user = await ctx.db.get("users", message.authorId);
         if (!user) {
           throw new Error("User not found");
         }

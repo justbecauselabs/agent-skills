@@ -27,3 +27,4 @@ export const exampleQuery = query({
 - When using the `Array` type, make sure to always define your arrays as `const array: Array<T> = [...];`
 - When using the `Record` type, make sure to always define your records as `const record: Record<KeyType, ValueType> = {...};`
 - Always add `@types/node` to your `package.json` when using any Node.js built-in modules.
+- Enable a no-floating-promises rule (e.g., `@typescript-eslint/no-floating-promises`) to enforce awaiting async calls.
