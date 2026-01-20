@@ -8,6 +8,25 @@ description: Use XcodeBuildMCP to build, run, launch, and debug the current iOS 
 ## Overview
 Use XcodeBuildMCP to build and run the current project scheme on a booted iOS simulator, interact with the UI, and capture logs. Prefer the MCP tools for simulator control, logs, and view inspection.
 
+## React Native vs Native
+- **React Native**: Build/run/launch is still through the iOS scheme. UI interaction is the same, but JS errors and `console.log` output often live in the Metro/Expo bundler output (or the RN redbox), not in simulator logs. If the app shows a blank screen or redbox, ask whether Metro is running and check bundler logs.
+- **Native**: Use simulator logs and `captureConsole` for most issues. Crashes in Swift/ObjC or native modules should show up in sim logs.
+- **Either**: Use MCP UI tools (`describe_ui`, `tap`, `gesture`, `screenshot`) the same way.
+
+## Prereqs (for local fallback automation)
+If MCP UI tools are unavailable and you need to drive the simulator directly:
+- Check for `idb` and `idb_companion`. If missing, **tell the user** and suggest installing:
+  - `brew tap facebook/fb`
+  - `brew install idb-companion`
+  - `pip3 install fb-idb`
+- Optional but useful: `ios-simulator-mcp` (npm package) if the user wants MCP-style UI tools.
+- **Security gotcha**: `idb_companion` logs its full environment to stdout. Run it with a sanitized env
+  (`env -i PATH=... HOME=... TMPDIR=/tmp idb_companion ...`) or redirect output to a safe log to avoid leaking secrets.
+- Keep `idb_companion` alive (foreground or nohup). If it dies, `idb list-targets` shows “No Companion Connected”.
+  Reconnect with `idb connect localhost 10882`.
+- Before starting a new `idb_companion`, kill any existing one (`pkill -f idb_companion`), then launch clean.
+- If you started `idb_companion`, try to stop it at the end of the task to avoid leaving it running.
+
 ## Core Workflow
 Follow this sequence unless the user asks for a narrower action.
 
@@ -38,6 +57,11 @@ Use these when asked to inspect or interact with the running app.
 - **Gestures**: `mcp__XcodeBuildMCP__gesture` for common scrolls and edge swipes.
 - **Screenshot**: `mcp__XcodeBuildMCP__screenshot` for visual confirmation.
 
+### Local fallback tips (idb UI)
+- Use `idb ui describe-all` or `describe-point` to confirm what’s currently visible.
+- Horizontal swipes sometimes require longer duration: try `idb ui swipe --duration 1.0 x1 y1 x2 y2`.
+- After navigation, re-check the UI tree to confirm the expected screen (e.g., onboarding page headline text changes).
+
 ## Logs & Console Output
 - Start logs: `mcp__XcodeBuildMCP__start_sim_log_cap` with the app bundle id.
 - Stop logs: `mcp__XcodeBuildMCP__stop_sim_log_cap` and summarize important lines.
@@ -47,3 +71,4 @@ Use these when asked to inspect or interact with the running app.
 - If build fails, ask whether to retry with `preferXcodebuild: true`.
 - If the wrong app launches, confirm the scheme and bundle id.
 - If UI elements are not hittable, re-run `describe_ui` after layout changes.
+- If local automation is requested but `idb`/`idb_companion` are missing, say so immediately and provide install steps.
