@@ -14,7 +14,10 @@ The `HeroUINativeProvider` is the root provider component that configures and in
 The provider serves as the main entry point for HeroUI Native, wrapping your application with essential contexts and configurations:
 
 - **Text Configuration**: Global text component settings for consistency across all HeroUI components
+- **Animation Defaults**: Shared animation configs for components like tabs, accordions, dialogs, and toasts
+- **Toast Defaults**: Global toast configuration used across the app
 - **Portal Management**: Handles overlays, modals, and other components that render on top of the app hierarchy
+- **Safe Area + Keyboard**: Installs safe area and keyboard listeners for overlay positioning
 
 ## Installation & Setup
 
@@ -76,6 +79,51 @@ config={{
 }}
 ```
 
+### Animation Configuration
+
+Provide shared animation defaults for component transitions.
+
+```tsx
+config={{
+  animations: {
+    tabIndicator: {/* AnimationConfig */},
+    accordionContent: {/* AnimationConfig */},
+    accordionIndicator: {/* AnimationConfig */},
+    dialog: {/* AnimationConfig */},
+    popover: {/* AnimationConfig */},
+    select: {/* AnimationConfig */},
+    toast: {/* AnimationConfig */},
+  },
+}}
+```
+
+### Toast Configuration
+
+Set global defaults for toast variants and behavior. Local toast props override these defaults.
+
+```tsx
+config={{
+  toast: {
+    defaultProps: {
+      duration: 4000,
+      placement: 'top',
+    },
+  },
+}}
+```
+
+### Dev Info
+
+Toggle dev-only overlay info when debugging layouts.
+
+```tsx
+config={{
+  devInfo: {
+    show: false,
+  },
+}}
+```
+
 ## Architecture
 
 ### Provider Hierarchy
@@ -104,6 +152,18 @@ const config: HeroUINativeConfig = {
     maxFontSizeMultiplier: 1.5,
     allowFontScaling: true,
     adjustsFontSizeToFit: false,
+  },
+  animations: {
+    tabIndicator: {/* AnimationConfig */},
+    accordionContent: {/* AnimationConfig */},
+    dialog: {/* AnimationConfig */},
+    toast: {/* AnimationConfig */},
+  },
+  toast: {
+    defaultProps: {
+      duration: 4000,
+      placement: 'top',
+    },
   },
 };
 
