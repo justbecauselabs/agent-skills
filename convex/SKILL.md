@@ -38,6 +38,9 @@ Read when: Writing database queries, filtering results, ordering data, or implem
 ### [Mutation Guidelines](references/mutation-guidelines.md)
 Read when: Updating or replacing documents in the database using `ctx.db.patch` or `ctx.db.replace`.
 
+### [Migrations Guidelines](references/migrations-guidelines.md)
+Read when: Planning or running Convex migrations, handling schema evolution, or using this repo's migration shortcuts and run-all workflow.
+
 ### [Action Guidelines](references/action-guidelines.md)
 Read when: Writing actions that call external APIs or use Node.js modules. Important to understand that actions cannot access `ctx.db` directly.
 
