@@ -1,0 +1,4 @@
+interface:
+  display_name: "Chrome Web Store Review Submit"
+  short_description: "Submit and troubleshoot Chrome extension review submissions."
+  default_prompt: "Prepare a Chrome Web Store draft for submission, resolve common blockers, and submit it for review."
