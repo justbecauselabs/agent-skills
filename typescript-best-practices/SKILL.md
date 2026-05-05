@@ -37,6 +37,7 @@ Keep this file practical. Record the repo's actual TypeScript standards here.
   search for an existing shared helper location in the repo first and add shared logic there
   instead of burying it in feature code.
 - Extract shared invariants and boundary adapters; do not invent generic cleanup utilities.
+- Run a quick duplicate-code smoke test with `jscpd` after refactors and before review.
 - Add a short helpful comment to each authored function that explains its purpose, invariant, or
   why it exists, without narrating the implementation line by line.
 
@@ -215,6 +216,26 @@ function parseLimit(value: string): number {
   refactor easier.
 - Prefer small boundary adapters and invariant helpers over abstract utility layers.
 
+## Duplicate-Code Smoke Test
+
+Use `jscpd` as a quick duplicate-code smoke test after refactors and before review, like a
+typecheck. In `/Users/billy/workspace/greens/backend2`, run:
+
+```bash
+cd /Users/billy/workspace/greens/backend2
+bunx --yes jscpd --format typescript --pattern '**/*.ts' --gitignore \
+  --min-lines 12 --min-tokens 120 \
+  --max-lines 5000 --max-size 1mb --reporters console --exitCode 0 packages
+```
+
+- Keep tests ignored at first because fixtures often create noise; add repo-appropriate ignores or
+  scope the pattern to production code when needed.
+- Lower `--min-tokens` to `60`-`80` when hunting smaller helper duplication.
+- Use `--reporters html,console` when a browsable report would help.
+- Pair clone detection with targeted `rg` for semantic duplicates: repeated function names,
+  comments, payload fields, or error strings. Exact clone tools do not catch same logic with
+  different spelling.
+
 ## Comment Rules
 
 - Add a short helpful comment to each authored function.
@@ -254,17 +275,19 @@ Avoid:
 10. If the change is purely about strings, numbers, URLs, arrays, dictionaries, deduping,
    filtering, or similar foundational types, search for an existing shared helper location in the
    repo first and add the shared logic there.
-11. If the code seems to require `as`, stop and look for a safer typing or validation approach
+11. After a refactor, run a quick `jscpd` duplicate-code smoke test when the repo/tooling can
+   support it.
+12. If the code seems to require `as`, stop and look for a safer typing or validation approach
    first.
-12. Before adding a new helper or abstraction, search the repo for an existing pattern you should
+13. Before adding a new helper or abstraction, search the repo for an existing pattern you should
    reuse.
-13. If similar logic exists in multiple modules, prefer extracting a shared invariant or boundary
+14. If similar logic exists in multiple modules, prefer extracting a shared invariant or boundary
    adapter over adding another copy.
-14. Use subagents to inspect the codebase for existing helpers, repeated transforms, and refactor
+15. Use subagents to inspect the codebase for existing helpers, repeated transforms, and refactor
     opportunities before introducing a new abstraction when subagents are available.
-15. Use subagents for bounded multi-file refactors when the write scope is clear, but avoid broad
+16. Use subagents for bounded multi-file refactors when the write scope is clear, but avoid broad
     reusable utilities unless the repetition is real.
-16. If a proposed abstraction only exists to generically "clean up" values, stop and check whether
+17. If a proposed abstraction only exists to generically "clean up" values, stop and check whether
     the real fix belongs at a typed boundary instead.
 
 ## Red Flags
@@ -298,6 +321,7 @@ Avoid:
 - For foundational string, number, URL, array, dictionary, dedupe, or filter logic, did the code
   search for and use a shared helper file instead of adding feature-local duplication?
 - Should repeated invariants or boundary adapters be extracted instead of copied again?
+- Did a `jscpd` smoke test or targeted `rg` search identify duplicate code worth refactoring?
 - Is `as` being used where stronger checks or better types should exist instead?
 - Are domain invariants modeled with exact types like unions, `Map`, `Set`, or `as const` values?
 - Does the code depend on the smallest capability surface it needs?

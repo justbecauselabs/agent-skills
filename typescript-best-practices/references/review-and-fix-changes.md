@@ -14,13 +14,14 @@ functions, foundational helper duplication, poor why-comments, and missed refact
 2. Compute the actual diff or commit list to inspect.
 3. Restrict the scope to `.ts` and `.tsx` files unless the user explicitly asks for broader
    review.
-4. Break the work into disjoint slices.
-5. Spawn 1-5 subagents for larger reviews when subagents are available.
-6. Tell each subagent to use `typescript-best-practices` as the full review rubric.
-7. Let each subagent apply obvious bounded fixes in its owned files.
-8. Have each subagent report remaining violations and any larger refactors.
-9. Review every returned patch or recommendation before deciding what lands.
-10. Ask the user before doing a large or cross-cutting refactor.
+4. Run the main skill's `jscpd` duplicate-code smoke test when the repo/tooling can support it.
+5. Break the work into disjoint slices.
+6. Spawn 1-5 subagents for larger reviews when subagents are available.
+7. Tell each subagent to use `typescript-best-practices` as the full review rubric.
+8. Let each subagent apply obvious bounded fixes in its owned files.
+9. Have each subagent report remaining violations and any larger refactors.
+10. Review every returned patch or recommendation before deciding what lands.
+11. Ask the user before doing a large or cross-cutting refactor.
 
 ## Determine Scope With Git
 
@@ -192,6 +193,7 @@ If there are no findings, say:
 
 - Did git scope the review accurately?
 - Was the review narrowed to the relevant TypeScript or TSX files?
+- Was `jscpd` used as a duplicate-code smoke test when practical?
 - Was the work split into disjoint slices before spawning subagents?
 - Did each subagent use `typescript-best-practices` as the review rubric?
 - Did the review stay focused on TypeScript quality rather than generic bug hunting?
