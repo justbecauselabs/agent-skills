@@ -219,13 +219,13 @@ function parseLimit(value: string): number {
 ## Duplicate-Code Smoke Test
 
 Use `jscpd` as a quick duplicate-code smoke test after refactors and before review, like a
-typecheck. In `/Users/billy/workspace/greens/backend2`, run:
+typecheck. From the current repository root, run:
 
 ```bash
-cd /Users/billy/workspace/greens/backend2
+cd "$(git rev-parse --show-toplevel)"
 bunx --yes jscpd --format typescript --pattern '**/*.ts' --gitignore \
   --min-lines 12 --min-tokens 120 \
-  --max-lines 5000 --max-size 1mb --reporters console --exitCode 0 packages
+  --max-lines 5000 --max-size 1mb --reporters console --exitCode 0 .
 ```
 
 - Keep tests ignored at first because fixtures often create noise; add repo-appropriate ignores or
