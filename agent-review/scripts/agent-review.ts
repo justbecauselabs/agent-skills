@@ -642,7 +642,7 @@ export function invokeClaude(params: {
       "user",
       "--strict-mcp-config",
       "--mcp-config",
-      "{}",
+      '{"mcpServers":{}}',
       "--tools",
       "",
       "--permission-mode",

@@ -212,14 +212,16 @@ printf '{"verdict":"clean","summary":"clean","findings":[]}' > "$output"
       join(binDirectory, "claude"),
       `
 model=""
+mcp_config=""
 while [ "$#" -gt 0 ]; do
-  if [ "$1" = "--model" ]; then
-    shift
-    model="$1"
-  fi
+  case "$1" in
+    --model) shift; model="$1" ;;
+    --mcp-config) shift; mcp_config="$1" ;;
+  esac
   shift
 done
 [ "$model" = "claude-fable-5" ]
+[ "$mcp_config" = '{"mcpServers":{}}' ]
 printf '{"structured_output":{"verdict":"clean","summary":"clean","findings":[]}}'
 `,
     );
