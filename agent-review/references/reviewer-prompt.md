@@ -18,7 +18,8 @@ defect. Prefer a few high-confidence findings.
 - `P1`: material security, correctness, reliability, or structural defect
   likely to affect normal use.
 - `P2`: high-confidence maintainability or abstraction defect that materially
-  increases future change risk; never cosmetic.
+  increases future change risk; never cosmetic. Return P2 only when this round's
+  focus explicitly requests architecture, abstractions, or code quality.
 
 ## Security and Correctness
 
@@ -30,6 +31,10 @@ lifecycle, error handling, and weakened checks.
 A security finding must name a concrete attack or exposure path.
 
 ## Structural Quality
+
+Apply this section only when this round's focus explicitly requests architecture,
+abstractions, or code quality. A correctness/security round must omit pure
+maintainability findings unless they create a concrete P0/P1 failure path.
 
 Look for a smaller, more inevitable design:
 
@@ -45,6 +50,9 @@ Look for a smaller, more inevitable design:
 - flag growth only when it creates a real comprehension/ownership problem.
 
 Do not reward abstraction for its own sake. Direct code is often best.
+
+An adversarial round rechecks concrete regression and bug classes. It must not use
+"adversarial" as permission to invent broader redesigns.
 
 ## Evidence
 

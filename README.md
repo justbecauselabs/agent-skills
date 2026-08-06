@@ -15,8 +15,9 @@ This repo is just a library of skill definitions.
 
 | Skill | Description | Path |
 | --- | --- | --- |
-| agent-review | Run iterative second-model code-review rounds with Codex Sol or Claude Fable, including security and leaked-credential analysis plus strict abstraction and code-quality review. | `agent-review/SKILL.md` |
+| agent-review | Run a bounded second-model code review with one default correctness/security round, one convergence retry after accepted fixes, and explicitly requested structural or adversarial profiles. | `agent-review/SKILL.md` |
 | app-store-connect-cli | App Store Connect CLI (`asc`) workflows. Use when installing or updating `asc`, authenticating with App Store Connect API keys, and automating App Store Connect operations such as TestFlight, builds, reviews, devices, and reports. | `app-store-connect-cli/SKILL.md` |
+| builder-loop | Disciplined plan, validate, and checkpointed-build workflow with a bounded final agent-review gate. | `builder-loop/SKILL.md` |
 | bun | Bun runtime and package manager guidance. Use when running Bun commands, managing dependencies, executing scripts, using bunx, running tests, or troubleshooting Bun-specific behavior in JS/TS projects. | `bun/SKILL.md` |
 | convex | Convex backend guidance for queries, mutations, actions, schema, validators, and API design. Use whenever interacting with a Convex backend, including implementing Convex functions, schema changes, HTTP endpoints, scheduling, storage, or client/server integration. | `convex/SKILL.md` |
 | drizzle | Drizzle ORM usage guidance. Use when defining Drizzle schemas, writing queries, configuring database connections (especially Postgres), and managing migrations with drizzle-kit or existing project tooling. | `drizzle/SKILL.md` |
