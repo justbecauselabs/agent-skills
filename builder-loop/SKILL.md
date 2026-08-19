@@ -66,8 +66,8 @@ reviewing a half-written layer with no consumer produces noise. For each unit:
    checkpoint gate; the integrated change is reviewed at CP-final.
    - Run a checkpoint review only when the user explicitly requested per-checkpoint
      review for that checkpoint.
-   - When requested, use the same bounded round-1 process as CP-final below; never
-     restart a complete multi-round sequence after every fix.
+   - When requested, use the same bounded process as CP-final below; never restart
+     a complete multi-round sequence after every fix.
 4. Commit the checkpoint (only when the user authorizes commits). Move to the next.
 
 A finding outside touched files is in scope only when the requested behavior would
@@ -80,13 +80,13 @@ Classify other adjacent findings as follow-up work.
 2. Run the full gate: complete typecheck / lint / test suite and a clean build.
 3. Run one bounded agent-review landing review over the complete change: use branch
    mode for a committed branch or local mode when work remains uncommitted.
-   - Default to round 1 (correctness/security).
+   - Start with round 1 using the combined correctness, security, structural-
+     simplicity, modularity, and reuse contract.
    - Verify findings against the real code and fix only in-scope blockers.
-   - After accepted fixes, rerun relevant proof and allow one round-1 convergence
-     review. Stop after it and report any unresolved findings; do not loop until
-     clean.
-   - Run structural round 2 only when the user explicitly requests deep structural
-     review. Do not inherit it merely because the change is non-trivial.
+   - After an accepted fix changes the source, rerun relevant proof and advance to
+     the next convergence round. Allow round 3 only when round 2 produces another
+     accepted blocker whose fix changes the source.
+   - Stop after round 3 and report unresolved findings; do not loop until clean.
 4. If the user requested publishing, use the available GitHub workflow to open or
    finish the PR and confirm CI is green and the PR is mergeable.
 5. **Stop at ready.** Do not merge or deploy — report merge/ship-readiness and let

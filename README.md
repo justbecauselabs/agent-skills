@@ -15,7 +15,7 @@ This repo is just a library of skill definitions.
 
 | Skill | Description | Path |
 | --- | --- | --- |
-| agent-review | Run a bounded second-model code review with one default correctness/security round, one convergence retry after accepted fixes, and explicitly requested structural or adversarial profiles. | `agent-review/SKILL.md` |
+| agent-review | Run a bounded second-model code review with one combined correctness, security, structural-simplicity, modularity, and reuse contract for one initial review plus up to two convergence retries. | `agent-review/SKILL.md` |
 | app-store-connect-cli | App Store Connect CLI (`asc`) workflows. Use when installing or updating `asc`, authenticating with App Store Connect API keys, and automating App Store Connect operations such as TestFlight, builds, reviews, devices, and reports. | `app-store-connect-cli/SKILL.md` |
 | builder-loop | Disciplined plan, validate, and checkpointed-build workflow with a bounded final agent-review gate. | `builder-loop/SKILL.md` |
 | bun | Bun runtime and package manager guidance. Use when running Bun commands, managing dependencies, executing scripts, using bunx, running tests, or troubleshooting Bun-specific behavior in JS/TS projects. | `bun/SKILL.md` |

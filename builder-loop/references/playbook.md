@@ -89,13 +89,12 @@ Format before agent-review if formatting can shift line locations.
   unrealistic edge cases, speculative risk, and broad rewrites.
 - Checkpoint gates are typechecks, lint, focused tests, or builds. Do not add an
   agent-review call unless the user explicitly requested review at that checkpoint.
-- At the final gate, run round 1 once. After accepted fixes, rerun relevant proof
-  and allow one round-1 convergence review.
-- Stop after the convergence review even if it reports findings. Report unresolved
-  blockers and ask before expanding scope; never keep reviewing to obtain a clean
-  label.
-- Round 2 is an explicit deep structural review, not part of the default builder
-  loop. Round 3 requires an explicit adversarial-review request.
+- At the final gate, run round 1 once using the combined review contract. After an
+  accepted fix changes the source, rerun relevant proof and advance to round 2.
+- Run round 3 only when round 2 produces another accepted blocker whose fix changes
+  the source. Every round reviews the complete current change with the same prompt.
+- Stop after round 3 even if it reports findings. Report unresolved blockers and ask
+  before expanding scope; never keep reviewing to obtain a clean label.
 
 ## Pitfalls this workflow exists to catch
 
