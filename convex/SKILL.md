@@ -77,7 +77,7 @@ Read when: Wiring Convex into React, React Native, Next.js App Router, Next.js P
 ## Practical guidance from the current docs
 
 1. If a task affects the public API shape, generated clients, OpenAPI output, or static codegen, strongly prefer explicit `args` and `returns` validators.
-2. If a task is internal-only and the payload is intentionally loose, a targeted `v.any()` can be acceptable, but document the trust boundary in code comments or surrounding helper names.
+2. If a task is internal-only and the payload is intentionally loose, a targeted `v.any()` can be acceptable, but make the trust boundary clear through surrounding helper names and types.
 3. If a task involves advanced search, choose between full-text search and vector search early because the schema, indexes, and function types differ.
 4. If a task involves frontend integration, pick the framework-specific client docs instead of assuming React defaults apply everywhere.
 5. If a task involves deployment or AI tooling, check `convex.json` and CLI docs before inventing project-level conventions; current Convex docs cover `functions`, `aiFiles`, Node runtime settings, and static codegen options there.

@@ -5,8 +5,8 @@ commit, or commit range through the `typescript-best-practices` lens.
 
 This is not a generic bug-hunting workflow. Review only for `typescript-best-practices`
 violations: weak boundaries, duplicated transforms, unnecessary cleanup, vague abstractions,
-over-broad seams, weak invariants, unnecessary casts, missing function comments, oversized
-functions, foundational helper duplication, poor why-comments, and missed refactors.
+over-broad seams, weak invariants, unnecessary casts, unrequested code comments, oversized
+functions, foundational helper duplication, and missed refactors.
 
 ## Fast Path
 
@@ -87,8 +87,9 @@ Each subagent should be told:
 
 - the exact files or module slice it owns
 - that it must use `typescript-best-practices` as the review rubric
-- to focus on helper reuse, boundary quality, invariant modeling, comments-for-why, and refactor
+- to focus on helper reuse, boundary quality, invariant modeling, comment-free clarity, and refactor
   opportunities
+- not to add or expand code comments unless the user explicitly requested them
 - to apply obvious bounded fixes directly in its owned files
 - to report larger refactors back instead of making them unilaterally
 - that it is not alone in the codebase and must not revert unrelated changes
@@ -101,7 +102,7 @@ Subagents should prefer:
 - removing unnecessary defensive normalization
 - narrowing dependency seams
 - improving domain types
-- adding short helpful function comments and why-comments for non-obvious invariants
+- replacing comment-dependent clarity with stronger naming, types, or helper structure
 
 Subagents should avoid:
 
@@ -139,7 +140,7 @@ Subagents may apply changes directly when the change is:
 - narrowing an obviously over-broad seam
 - moving purely foundational string, number, URL, array, dictionary, dedupe, or filter logic into
   an existing shared helper file
-- adding a short helpful function comment or why-comment for a non-obvious invariant
+- removing an unrequested comment added by the reviewed change
 - a missing local test that protects the TypeScript refactor or invariant
 
 Subagents should report back instead of changing code when the change is:

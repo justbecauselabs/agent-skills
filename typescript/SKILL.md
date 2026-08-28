@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: TypeScript best-practices guidance. Use when writing or reviewing TypeScript, choosing function and helper patterns, documenting intent, shaping TypeScript APIs, or running linting workflows.
+description: TypeScript best-practices guidance. Use when writing or reviewing TypeScript, choosing function and helper patterns, shaping TypeScript APIs, or running linting workflows.
 ---
 
 # TypeScript Best Practices
@@ -26,9 +26,11 @@ Apply these conventions across TypeScript code. Favor existing repo patterns and
 ## Look for existing solutions
 - When you need to do some common logic, see if we already have a helper function or do the same logic somewhere else. If so extract it to a helper.
 
-## Document intent with JSDoc
-- Maintain `/** ... */` blocks on exported functions, hooks, and utilities; describe purpose, parameters, and return payloads.
-- Update JSDoc whenever behavior or contracts change; stale comments are worse than no comments.
+## Do not write code comments
+- Do not add or expand comments, JSDoc, TODOs, explanatory blocks, commented-out code, or directive comments unless the user explicitly asks for comments in code.
+- Existing comments, neighboring style, lint rules, and documentation do not count as explicit user instruction.
+- Express intent through naming, types, small functions, and clear structure.
+- Preserve accurate existing comments. If a code change makes an existing comment stale, remove it instead of rewriting it unless the user explicitly requested code comments.
 
 ## Linting
 - Read `references/linting.md` when running or recommending TypeScript lint commands (oxlint or biome) or adjusting lint workflows.

@@ -1,6 +1,6 @@
 ---
 name: typescript-best-practices
-description: Use whenever writing, editing, refactoring, or reviewing TypeScript or TSX code. This skill defines how TypeScript should be modeled, how boundaries and shared helpers should be handled, how comments should be written, and how to keep code clear, DRY, and free of defensive AI slop. For review workflows, read references/review-and-fix-changes.md.
+description: Use whenever writing, editing, refactoring, or reviewing TypeScript or TSX code. This skill defines how TypeScript should be modeled, how boundaries and shared helpers should be handled, how intent should be expressed without code comments, and how to keep code clear, DRY, and free of defensive AI slop. For review workflows, read references/review-and-fix-changes.md.
 ---
 
 # TypeScript Best Practices
@@ -38,8 +38,7 @@ Keep this file practical. Record the repo's actual TypeScript standards here.
   instead of burying it in feature code.
 - Extract shared invariants and boundary adapters; do not invent generic cleanup utilities.
 - Run a quick duplicate-code smoke test with `jscpd` after refactors and before review.
-- Add a short helpful comment to each authored function that explains its purpose, invariant, or
-  why it exists, without narrating the implementation line by line.
+- Do not add or expand code comments unless the user explicitly asks for comments in code.
 
 ## Priority Order
 
@@ -79,7 +78,6 @@ const issueSchema = z.object({
 
 type Issue = z.infer<typeof issueSchema>;
 
-// Validate and coerce the raw payload once so the domain type can stay strict.
 function parseIssue({ body }: { body: string }): Issue {
   return issueSchema.parse(JSON.parse(body) as unknown);
 }
@@ -111,7 +109,6 @@ function buildWorkspaceLabel(issue: Issue, ownerName?: string): string {
 Good:
 
 ```ts
-// Preserve the display state while deriving a stable key for internal path generation.
 function buildWorkspaceLabel(params: {
   issue: Issue;
   ownerName?: string;
@@ -126,7 +123,6 @@ function buildWorkspaceLabel(params: {
   });
 }
 
-// Use a stable fallback only for internal workspace naming.
 function buildOwnerKey(ownerName?: string): string {
   return ownerName ?? "unassigned";
 }
@@ -147,7 +143,6 @@ Good:
 ```ts
 import { unique } from "../shared/collections";
 
-// Reuse the shared collection helper so dedupe behavior stays consistent across features.
 function listUniqueIssueIds(issues: Issue[]): string[] {
   return unique(issues.map((issue) => issue.id));
 }
@@ -157,24 +152,15 @@ If no shared helper exists yet, search for an existing shared helper location fi
 foundational logic like strings, numbers, URLs, arrays, dictionaries, deduping, or filtering, add
 the reusable helper there instead of embedding it inside a feature module. Always look for utils/helpers/etc folders for these
 
-### 4. Add a short helpful comment to each authored function.
+### 4. Do not write code comments unless the user explicitly requests them.
 
-Bad:
-
-```ts
-function parseToken(value: string): string {
-  return value.trim();
-}
-```
-
-Good:
-
-```ts
-// Keep env-token cleanup in one place so callers do not each invent their own parsing rules.
-function parseToken(value: string): string {
-  return value.trim();
-}
-```
+- This includes line comments, block comments, JSDoc, TODOs, commented-out code, and directive
+  comments.
+- Existing comments, neighboring style, lint rules, and documentation do not count as explicit
+  user instruction.
+- Express intent with precise names, types, small functions, and clear structure.
+- Preserve accurate existing comments. If a change makes one stale, remove it instead of
+  rewriting it unless the user explicitly requested code comments.
 
 ### 5. Prefer explicit boundary errors over defensive defaults.
 
@@ -191,7 +177,6 @@ Good:
 ```ts
 const limitSchema = z.coerce.number().int().nonnegative();
 
-// Fail at the boundary instead of silently converting broken input into a fake default.
 function parseLimit(value: string): number {
   return limitSchema.parse(value);
 }
@@ -236,28 +221,17 @@ bunx --yes jscpd --format typescript --pattern '**/*.ts' --gitignore \
   comments, payload fields, or error strings. Exact clone tools do not catch same logic with
   different spelling.
 
-## Comment Rules
+## Code Comment Rules
 
-- Add a short helpful comment to each authored function.
-- Function comments should explain purpose, constraints, invariants, protocol quirks, product
-  behavior, or refactor hazards.
-- Comments should not narrate obvious control flow or restate the next line of code.
-- Use comments sparingly but intentionally.
-- Keep each function comment short and high signal.
-
-Prefer:
-
-- comments that explain what contract a function owns
-- comments that explain why a fallback exists
-- comments that explain why a transform preserves both `state` and `stateKey`
-- comments that explain why a branch is strict, why a retry rule exists, or what invariant must
-  stay true
-
-Avoid:
-
-- comments like "increment the counter"
-- comments like "return the result"
-- large prose blocks that should have been split into named helpers
+- Do not add or expand code comments unless the user explicitly requests them.
+- Treat JSDoc, TODOs, explanatory blocks, commented-out code, and directive comments as code
+  comments under this rule.
+- Do not infer permission from existing comments, neighboring style, lint rules, generated
+  examples, or documentation.
+- Preserve accurate existing comments. If changed code makes one stale, remove it instead of
+  rewriting it unless the user explicitly requested code comments.
+- Make the code self-explanatory through precise names, strong types, small helpers, and clear
+  structure.
 
 ## Workflow
 
@@ -271,7 +245,7 @@ Avoid:
 7. For functions with multiple authored parameters, usually prefer `fn(params: { ... })`.
 8. For functions with a single parameter, pass the value directly instead of wrapping it in a
    params object unless there is a strong local reason not to.
-9. Add a short helpful comment to each authored function.
+9. Do not add or expand code comments unless the user explicitly requested them.
 10. If the change is purely about strings, numbers, URLs, arrays, dictionaries, deduping,
    filtering, or similar foundational types, search for an existing shared helper location in the
    repo first and add the shared logic there.
@@ -303,8 +277,8 @@ Avoid:
 - duplicated boundary transforms across multiple files
 - domain types carrying both `null` and `undefined` without a good reason
 - broad interfaces or classes passed through layers that only need one or two methods
-- missing function comments
-- comments that restate obvious code rather than preserving intent
+- newly added or expanded code comments without an explicit user request
+- stale existing comments left behind after the code they describe changes
 
 ## Review Checklist
 
@@ -325,6 +299,7 @@ Avoid:
 - Is `as` being used where stronger checks or better types should exist instead?
 - Are domain invariants modeled with exact types like unions, `Map`, `Set`, or `as const` values?
 - Does the code depend on the smallest capability surface it needs?
-- Does each authored function have a short helpful comment?
-- Are comments explaining why and constraints, rather than narrating what?
+- Did the change avoid adding or expanding code comments unless the user explicitly requested
+  them?
+- Were stale existing comments removed instead of rewritten when comments were not requested?
 - Is the code hiding broken assumptions behind weak defaults or silent fallbacks?
