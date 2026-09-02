@@ -13,7 +13,8 @@ Use this skill to choose and configure HeroUI Native components and providers, a
 2. Use `references/introduction.md` or `references/quick-start.md` for onboarding and installation.
 3. Use `references/config.md` for provider setup, `references/theming.md` for tokens, and `references/colors.md`/`references/styling.md`/`references/animation.md`/`references/composition.md` for UI patterns.
 4. Use `references/design-principles.md` for product guidance and `references/llms-txt.md` or `references/mcp-server.md` for AI tooling.
-5. Load only the component docs you need.
+5. Before using `Dialog` for a screen-sized flow, read `references/dialog.md` and apply its Dialog-versus-route boundary.
+6. Load only the component docs you need.
 
 ## Reference Directory
 All reference files live directly in `references/`:

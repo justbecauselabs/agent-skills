@@ -9,6 +9,12 @@ read_when:
 
 Displays a modal overlay with animated transitions and gesture-based dismissal.
 
+## Choose Dialog or a Route
+
+Use `Dialog` for a focused interruption that belongs to the current screen, such as a confirmation, a short form, or a small choice set.
+
+Use an Expo Router modal route when the experience behaves like a screen: it is full-screen, contains substantial or scrollable content, has its own header or navigation lifecycle, accepts route parameters, or may need deep linking. If the user asks for a completely new route presented as a modal, create that route and configure its stack presentation, such as `fullScreenModal` on iOS. Do not imitate a screen by stretching `Dialog` to fill the viewport.
+
 ## Imports
 
 Note: Before importing this component, ensure you have completed the setup as per the [Quick Start guide](../../../README.md).
